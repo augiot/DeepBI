@@ -7,7 +7,6 @@ if [ -f .env ]; then
 fi
 
 if [ -f Dockerfile ]; then
-    echo "rm Dockerfile"
     rm Dockerfile
 fi
 # 检测docker
@@ -45,17 +44,17 @@ done
 # shellcheck disable=SC2162
 echo "如果开放外部访问，需要调整防火墙允许访问"
 # shellcheck disable=SC2162
-read -p "我们会使用服务端口 8015 8016 8017,确保它们没有使用？(Y/N): " confirm
+read -p "我们会使用服务端口 8338 8339 8340,确保它们没有使用？(Y/N): " confirm
 if [[ $confirm == "N" || $confirm == "n" ]]; then
     exit 1
 fi
 # get web port
 # shellcheck disable=SC2162
-web_port=8015
+web_port=8338
 # get socket port
 # shellcheck disable=SC2162
-socket_port=8016
-ai_web_port=8017
+socket_port=8339
+ai_web_port=8340
 
 # replace front file ip
 echo "Rename files "
@@ -64,11 +63,11 @@ cp -R ./client/dist_source ./client/dist
 echo "Replace ip port"
 os_name=$(uname)
 if [[ "$os_name" == "Darwin" ]]; then
-    sed -i '' "s|192.168.5.165:8016|$ip:$socket_port|g" ./client/dist/vendors~app.js
-    sed -i '' "s|192.168.5.165:8016|$ip:$socket_port|g" ./client/dist/app.js
+    sed -i '' "s|192.168.5.165:8339|$ip:$socket_port|g" ./client/dist/vendors~app.js
+    sed -i '' "s|192.168.5.165:8339|$ip:$socket_port|g" ./client/dist/app.js
 else
-    sed -i "s|192.168.5.165:8016|$ip:$socket_port|g" ./client/dist/vendors~app.js
-    sed -i "s|192.168.5.165:8016|$ip:$socket_port|g" ./client/dist/app.js
+    sed -i "s|192.168.5.165:8339|$ip:$socket_port|g" ./client/dist/vendors~app.js
+    sed -i "s|192.168.5.165:8339|$ip:$socket_port|g" ./client/dist/app.js
 fi
 # 复制 .env file基础内容
 env_content=$(cat .env.template)
@@ -88,8 +87,7 @@ env_content=$(echo "$env_content" | sed "s/SEC_KEY/$sec_key/g")
 # save .env file，保存文件
 echo "$env_content" > .env
 # 修改配置 pip 为国内清华源
-# sed 's/#CN#//g' Dockerfile.template > Dockerfile
-sed 's/CN#//g' Dockerfile.template > Dockerfile
+sed 's/#CN#//g' Dockerfile.template > Dockerfile
 # 输出说明：
 echo "所有配置如下:"
 echo "--------------------------------"
